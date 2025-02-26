@@ -48,7 +48,7 @@ async function adminLogin() {
     loadForm();
     loadAnnouncements();
   } else {
-    alert('登录失败：用户名或密码错误');
+    alert('登录失败');
   }
 }
 
@@ -85,6 +85,8 @@ async function createUser() {
   });
   if (response.ok) {
     alert('用户生成成功');
+    document.getElementById('new-username').value = '';
+    document.getElementById('new-password').value = '';
     loadUsers();
   } else {
     alert('用户生成失败');
@@ -132,8 +134,7 @@ async function saveAnnouncements() {
   });
   if (response.ok) {
     alert('公告已保存');
-    loadAnnouncements(); // 刷新公告显示
   } else {
-    alert('公告保存失败');
+    alert('保存失败');
   }
 }
