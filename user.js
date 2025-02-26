@@ -62,21 +62,20 @@ async function loadForm() {
     const label = document.createElement('label');
     label.textContent = field.label;
     label.style.display = 'block';
-    const input = document.createElement('input');
-    input.type = field.type;
-    input.name = field.name;
-    input.value = info[field.name] || '';
+    const textarea = document.createElement('textarea');
+    textarea.name = field.name;
+    textarea.value = info[field.name] || '';
     formEl.appendChild(label);
-    formEl.appendChild(input);
+    formEl.appendChild(textarea);
   });
   loadAnnouncements();
 }
 
-async function saveForm() {
+async function submitForm() {
   const form = document.getElementById('user-form');
   const data = {};
-  for (const input of form.getElementsByTagName('input')) {
-    data[input.name] = input.value;
+  for (const textarea of form.getElementsByTagName('textarea')) {
+    data[textarea.name] = textarea.value;
   }
   const response = await fetch(`${WORKERS_URL}/api/save`, {
     method: 'POST',
@@ -84,7 +83,7 @@ async function saveForm() {
     body: JSON.stringify({ username: currentUsername, data }),
   });
   if (response.ok) {
-    alert('保存成功');
+    alert('提交成功！请耐心等待...\n通常3小时内完成。完成后激活会通过咸鱼通知您激活。\n激活教学见公告内容，仔细阅读公告，有问题咸鱼联系我。');
   }
 }
 
