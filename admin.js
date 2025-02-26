@@ -20,20 +20,32 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
-// 自动登录
-window.onload = () => {
+// 确保 DOM 加载完成再执行
+document.addEventListener('DOMContentLoaded', () => {
   const adminUsername = getCookie('adminUsername');
   const adminPassword = getCookie('adminPassword');
   if (adminUsername && adminPassword) {
-    document.getElementById('admin-username').value = adminUsername;
-    document.getElementById('admin-password').value = adminPassword;
-    adminLogin();
+    const usernameInput = document.getElementById('admin-username');
+    const passwordInput = document.getElementById('admin-password');
+    if (usernameInput && passwordInput) {
+      usernameInput.value = adminUsername;
+      passwordInput.value = adminPassword;
+      adminLogin();
+    } else {
+      console.error('未找到登录输入框');
+    }
   }
-};
+});
 
 async function adminLogin() {
-  const username = document.getElementById('admin-username').value;
-  const password = document.getElementById('admin-password').value;
+  const usernameInput = document.getElementById('admin-username');
+  const passwordInput = document.getElementById('admin-password');
+  if (!usernameInput || !passwordInput) {
+    alert('页面加载错误，未找到登录输入框');
+    return;
+  }
+  const username = usernameInput.value;
+  const password = passwordInput.value;
   const response = await fetch(`${WORKERS_URL}/api/admin/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -94,20 +106,20 @@ async function createUser() {
 }
 
 async function loadForm() {
+  const formTextarea = document.getElementById('form-structure');
+  if (!formTextarea) {
+    console.error('未找到 form-structure 元素');
+    return;
+  }
   const response = await fetch(`${WORKERS_URL}/api/form`);
   const formStructure = await response.json();
-  const formTextarea = document.getElementById('form-structure');
-  if (formTextarea) {
-    formTextarea.value = JSON.stringify(formStructure, null, 2);
-  } else {
-    console.error('未找到 form-structure 元素');
-  }
+  formTextarea.value = JSON.stringify(formStructure, null, 2);
 }
 
 async function saveForm() {
   const formTextarea = document.getElementById('form-structure');
   if (!formTextarea) {
-    alert('未找到表格输入框');
+    alert('未找到表格输入框，请检查页面加载');
     return;
   }
   try {
@@ -126,25 +138,25 @@ async function saveForm() {
       alert('保存失败');
     }
   } catch (error) {
-    alert('表格格式错误，请检查 JSON');
+    alert('表格格式错误，请检查 JSON：' + error.message);
   }
 }
 
 async function loadAnnouncements() {
+  const annTextarea = document.getElementById('announcements');
+  if (!annTextarea) {
+    console.error('未找到 announcements 元素');
+    return;
+  }
   const response = await fetch(`${WORKERS_URL}/api/announcements`);
   const announcements = await response.json();
-  const annTextarea = document.getElementById('announcements');
-  if (annTextarea) {
-    annTextarea.value = JSON.stringify(announcements, null, 2);
-  } else {
-    console.error('未找到 announcements 元素');
-  }
+  annTextarea.value = JSON.stringify(announcements, null, 2);
 }
 
 async function saveAnnouncements() {
   const annTextarea = document.getElementById('announcements');
   if (!annTextarea) {
-    alert('未找到公告输入框');
+    alert('未找到公告输入框，请检查页面加载');
     return;
   }
   try {
@@ -164,6 +176,6 @@ async function saveAnnouncements() {
       alert('公告保存失败');
     }
   } catch (error) {
-    alert('公告格式错误，请检查 JSON');
+    alert('公告格式错误，请检查 JSON：' + error.message);
   }
 }
