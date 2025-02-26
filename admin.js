@@ -91,3 +91,19 @@ async function setForm() {
     alert('更新失败');
   }
 }
+
+async function addAnnouncement() {
+  const content = document.getElementById('announcement-content').value;
+  const response = await fetch(`${WORKERS_URL}/api/admin/add-announcement`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': document.getElementById('admin-password').value,
+    },
+    body: JSON.stringify({ content }),
+  });
+  if (response.ok) {
+    alert('公告已发布');
+    document.getElementById('announcement-content').value = '';
+  }
+}
