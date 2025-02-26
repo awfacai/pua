@@ -22,13 +22,6 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
-// 复制到剪贴板
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    alert('已复制到剪贴板');
-  });
-}
-
 // 自动登录
 window.onload = () => {
   const adminPassword = getCookie('adminPassword');
@@ -72,12 +65,7 @@ async function loadUsers() {
     const infoStr = Object.entries(user.info)
       .map(([key, value]) => `${labelMap[key] || key}: ${value}`)
       .join(', ');
-    li.innerHTML = `
-      <div class="user-info">
-        <span>${user.username}: ${infoStr || '无信息'}</span>
-        <button class="copy-btn" onclick="copyToClipboard('${user.username}: ${infoStr}')">复制</button>
-      </div>
-    `;
+    li.textContent = `${user.username}: ${infoStr || '无信息'}`;
     list.appendChild(li);
   });
 }
