@@ -96,46 +96,74 @@ async function createUser() {
 async function loadForm() {
   const response = await fetch(`${WORKERS_URL}/api/form`);
   const formStructure = await response.json();
-  document.getElementById('form-structure').value = JSON.stringify(formStructure, null, 2);
+  const formTextarea = document.getElementById('form-structure');
+  if (formTextarea) {
+    formTextarea.value = JSON.stringify(formStructure, null, 2);
+  } else {
+    console.error('未找到 form-structure 元素');
+  }
 }
 
 async function saveForm() {
-  const formStructure = JSON.parse(document.getElementById('form-structure').value);
-  const response = await fetch(`${WORKERS_URL}/api/admin/set-form`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `${document.getElementById('admin-username').value}:${document.getElementById('admin-password').value}`,
-    },
-    body: JSON.stringify(formStructure),
-  });
-  if (response.ok) {
-    alert('表格已保存');
-  } else {
-    alert('保存失败');
+  const formTextarea = document.getElementById('form-structure');
+  if (!formTextarea) {
+    alert('未找到表格输入框');
+    return;
+  }
+  try {
+    const formStructure = JSON.parse(formTextarea.value);
+    const response = await fetch(`${WORKERS_URL}/api/admin/set-form`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `${document.getElementById('admin-username').value}:${document.getElementById('admin-password').value}`,
+      },
+      body: JSON.stringify(formStructure),
+    });
+    if (response.ok) {
+      alert('表格已保存');
+    } else {
+      alert('保存失败');
+    }
+  } catch (error) {
+    alert('表格格式错误，请检查 JSON');
   }
 }
 
 async function loadAnnouncements() {
   const response = await fetch(`${WORKERS_URL}/api/announcements`);
   const announcements = await response.json();
-  document.getElementById('announcements').value = JSON.stringify(announcements, null, 2);
+  const annTextarea = document.getElementById('announcements');
+  if (annTextarea) {
+    annTextarea.value = JSON.stringify(announcements, null, 2);
+  } else {
+    console.error('未找到 announcements 元素');
+  }
 }
 
 async function saveAnnouncements() {
-  const announcements = JSON.parse(document.getElementById('announcements').value);
-  const response = await fetch(`${WORKERS_URL}/api/admin/update-announcements`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `${document.getElementById('admin-username').value}:${document.getElementById('admin-password').value}`,
-    },
-    body: JSON.stringify(announcements),
-  });
-  if (response.ok) {
-    alert('公告已保存');
-    loadAnnouncements(); // 刷新显示
-  } else {
-    alert('公告保存失败');
+  const annTextarea = document.getElementById('announcements');
+  if (!annTextarea) {
+    alert('未找到公告输入框');
+    return;
+  }
+  try {
+    const announcements = JSON.parse(annTextarea.value);
+    const response = await fetch(`${WORKERS_URL}/api/admin/update-announcements`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `${document.getElementById('admin-username').value}:${document.getElementById('admin-password').value}`,
+      },
+      body: JSON.stringify(announcements),
+    });
+    if (response.ok) {
+      alert('公告已保存');
+      loadAnnouncements(); // 刷新显示
+    } else {
+      alert('公告保存失败');
+    }
+  } catch (error) {
+    alert('公告格式错误，请检查 JSON');
   }
 }
