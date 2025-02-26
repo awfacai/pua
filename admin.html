@@ -30,7 +30,6 @@
     }
     textarea {
       height: 100px;
-      resize: vertical;
     }
     button {
       background: #28A745;
@@ -52,6 +51,9 @@
       padding: 5px 0;
       border-bottom: 1px solid #ddd;
     }
+    .item {
+      margin: 10px 0;
+    }
   </style>
 </head>
 <body>
@@ -68,10 +70,11 @@
     <input type="password" id="new-password" placeholder="密码">
     <button onclick="createUser()">生成</button>
     <h2>表格管理</h2>
-    <textarea id="form-structure" placeholder="表格 JSON"></textarea>
+    <div id="form-fields-list"></div>
+    <input type="text" id="form-name" placeholder="表格名称">
     <button onclick="saveForm()">保存表格</button>
     <h2>公告管理</h2>
-    <textarea id="announcements" placeholder="公告 JSON"></textarea>
+    <div id="announcements-list"></div>
     <button onclick="saveAnnouncements()">保存所有公告</button>
   </div>
   <script src="/admin.js"></script>
