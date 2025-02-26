@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>后台管理</title>
+</head>
+<body>
+  <div id="admin-login">
+    <input type="password" id="admin-password" placeholder="后台密码">
+    <button onclick="adminLogin()">登录</button>
+  </div>
+  <div id="admin-panel" style="display: none;">
+    <h2>用户信息</h2>
+    <ul id="user-list"></ul>
+    <h2>生成用户</h2>
+    <input type="text" id="new-username" placeholder="新用户名">
+    <input type="password" id="new-password" placeholder="密码">
+    <button onclick="createUser()">生成</button>
+    <h2>设置表格</h2>
+    <input type="text" id="form-name" placeholder="表格名称">
+    <textarea id="form-fields" placeholder='[{"name": "field1", "type": "text", "label": "字段1"}]'></textarea>
+    <button onclick="setForm()">更新表格</button>
+  </div>
+  <script src="/admin.js"></script>
+</body>
+</html>
