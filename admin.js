@@ -20,20 +20,21 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
-// 确保 DOM 加载完成再执行
+// 自动登录
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM 已加载，正在检查自动登录...');
   const adminUsername = getCookie('adminUsername');
   const adminPassword = getCookie('adminPassword');
+  const usernameInput = document.getElementById('admin-username');
+  const passwordInput = document.getElementById('admin-password');
+  if (!usernameInput || !passwordInput) {
+    console.error('未找到登录输入框，可能页面未正确加载');
+    return;
+  }
   if (adminUsername && adminPassword) {
-    const usernameInput = document.getElementById('admin-username');
-    const passwordInput = document.getElementById('admin-password');
-    if (usernameInput && passwordInput) {
-      usernameInput.value = adminUsername;
-      passwordInput.value = adminPassword;
-      adminLogin();
-    } else {
-      console.error('未找到登录输入框');
-    }
+    usernameInput.value = adminUsername;
+    passwordInput.value = adminPassword;
+    adminLogin();
   }
 });
 
@@ -109,6 +110,7 @@ async function loadForm() {
   const formTextarea = document.getElementById('form-structure');
   if (!formTextarea) {
     console.error('未找到 form-structure 元素');
+    alert('未找到表格输入框，请检查页面');
     return;
   }
   const response = await fetch(`${WORKERS_URL}/api/form`);
@@ -119,7 +121,8 @@ async function loadForm() {
 async function saveForm() {
   const formTextarea = document.getElementById('form-structure');
   if (!formTextarea) {
-    alert('未找到表格输入框，请检查页面加载');
+    console.error('未找到 form-structure 元素');
+    alert('未找到表格输入框，请检查页面');
     return;
   }
   try {
@@ -146,6 +149,7 @@ async function loadAnnouncements() {
   const annTextarea = document.getElementById('announcements');
   if (!annTextarea) {
     console.error('未找到 announcements 元素');
+    alert('未找到公告输入框，请检查页面');
     return;
   }
   const response = await fetch(`${WORKERS_URL}/api/announcements`);
@@ -156,7 +160,8 @@ async function loadAnnouncements() {
 async function saveAnnouncements() {
   const annTextarea = document.getElementById('announcements');
   if (!annTextarea) {
-    alert('未找到公告输入框，请检查页面加载');
+    console.error('未找到 announcements 元素');
+    alert('未找到公告输入框，请检查页面');
     return;
   }
   try {
