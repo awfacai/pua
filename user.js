@@ -54,29 +54,39 @@ async function login() {
     document.getElementById('form').style.display = 'block';
     loadForm();
   } else {
-    alert('登录失败');
+    alert('登录失败：用户名或密码错误');
   }
 }
 
 async function loadForm() {
-  const response = await fetch(`${WORKERS_URL}/api/form?username=${currentUsername}`);
-  const { form, info } = await response.json();
-  document.getElementById('form-title').textContent = form.name;
-  const formEl = document.getElementById('user-form');
-  formEl.innerHTML = '';
-  form.fields.forEach(field => {
-    const label = document.createElement('label');
-    label.textContent = field.label;
-    label.style.display = 'block';
-    const textarea = document.createElement('textarea');
-    textarea.name = field.name;
-    textarea.value = info[field.name] || '';
-    textarea.oninput = () => adjustTextareaHeight(textarea);
-    adjustTextareaHeight(textarea); // 初始化高度
-    formEl.appendChild(label);
-    formEl.appendChild(textarea);
-  });
-  loadAnnouncements();
+  try {
+    const response = await fetch(`${WORKERS_URL}/api/form?username=${currentUsername}`);
+    if (!response.ok) throw new Error('无法加载表格数据');
+    const { form, info } = await response.json();
+    document.getElementById('form-title').textContent = form.name || '未设置表格名称';
+    const formEl = document.getElementById('user-form');
+    formEl.innerHTML = '';
+    if (form.fields && Array.isArray(form.fields)) {
+      form.fields.forEach(field => {
+        const label = document.createElement('label');
+        label.textContent = field.label || field.name;
+        label.style.display = 'block';
+        const textarea = document.createElement('textarea');
+        textarea.name = field.name;
+        textarea.value = info[field.name] || '';
+        textarea.oninput = () => adjustTextareaHeight(textarea);
+        adjustTextareaHeight(textarea); // 初始化高度
+        formEl.appendChild(label);
+        formEl.appendChild(textarea);
+      });
+    } else {
+      formEl.innerHTML = '<p>暂无表格字段</p>';
+    }
+    loadAnnouncements();
+  } catch (error) {
+    console.error(error);
+    document.getElementById('form').innerHTML = '<p>加载表格失败，请稍后重试</p>';
+  }
 }
 
 async function submitForm() {
@@ -92,18 +102,30 @@ async function submitForm() {
   });
   if (response.ok) {
     alert('提交成功！请耐心等待...\n通常3小时内完成。完成后激活会通过咸鱼通知您激活。\n激活教学见公告内容，仔细阅读公告，有问题咸鱼联系我。');
+  } else {
+    alert('提交失败');
   }
 }
 
 async function loadAnnouncements() {
-  const response = await fetch(`${WORKERS_URL}/api/announcements`);
-  const announcements = await response.json();
-  const container = document.getElementById('announcements');
-  container.innerHTML = '<h3>公告</h3>';
-  announcements.forEach(ann => {
-    const div = document.createElement('div');
-    div.className = 'announcement';
-    div.innerHTML = `<strong>${ann.date}</strong><p>${ann.content}</p>`;
-    container.appendChild(div);
-  });
+  try {
+    const response = await fetch(`${WORKERS_URL}/api/announcements`);
+    if (!response.ok) throw new Error('无法加载公告');
+    const announcements = await response.json();
+    const container = document.getElementById('announcements');
+    container.innerHTML = '<h3>公告</h3>';
+    if (announcements.length > 0) {
+      announcements.forEach(ann => {
+        const div = document.createElement('div');
+        div.className = 'announcement';
+        div.innerHTML = `<strong>${ann.date}</strong><p>${ann.content}</p>`;
+        container.appendChild(div);
+      });
+    } else {
+      container.innerHTML += '<p>暂无公告</p>';
+    }
+  } catch (error) {
+    console.error(error);
+    document.getElementById('announcements').innerHTML = '<p>加载公告失败</p>';
+  }
 }
