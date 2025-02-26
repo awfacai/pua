@@ -24,21 +24,25 @@ function getCookie(name) {
 
 // 自动登录
 window.onload = () => {
+  const adminUsername = getCookie('adminUsername');
   const adminPassword = getCookie('adminPassword');
-  if (adminPassword) {
+  if (adminUsername && adminPassword) {
+    document.getElementById('admin-username').value = adminUsername;
     document.getElementById('admin-password').value = adminPassword;
     adminLogin();
   }
 };
 
 async function adminLogin() {
+  const username = document.getElementById('admin-username').value;
   const password = document.getElementById('admin-password').value;
   const response = await fetch(`${WORKERS_URL}/api/admin/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password }),
+    body: JSON.stringify({ username, password }),
   });
   if (response.ok) {
+    setCookie('adminUsername', username, 30);
     setCookie('adminPassword', password, 30);
     document.getElementById('admin-login').style.display = 'none';
     document.getElementById('admin-panel').style.display = 'block';
@@ -46,13 +50,13 @@ async function adminLogin() {
     loadAnnouncements();
     loadForm();
   } else {
-    alert('密码错误');
+    alert('登录失败');
   }
 }
 
 async function loadUsers() {
   const response = await fetch(`${WORKERS_URL}/api/admin/users`, {
-    headers: { 'Authorization': document.getElementById('admin-password').value },
+    headers: { 'Authorization': `${document.getElementById('admin-username').value}:${document.getElementById('admin-password').value}` },
   });
   const users = await response.json();
   const formResponse = await fetch(`${WORKERS_URL}/api/form`);
@@ -77,7 +81,7 @@ async function createUser() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': document.getElementById('admin-password').value,
+      'Authorization': `${document.getElementById('admin-username').value}:${document.getElementById('admin-password').value}`,
     },
     body: JSON.stringify({ username, password }),
   });
@@ -101,15 +105,6 @@ async function loadForm() {
   });
 }
 
-async function addField() {
-  const newField = document.getElementById('new-field').value;
-  if (newField) {
-    formStructure.fields.push(JSON.parse(newField));
-    document.getElementById('new-field').value = '';
-    loadForm();
-  }
-}
-
 function deleteField(index) {
   formStructure.fields.splice(index, 1);
   loadForm();
@@ -124,7 +119,7 @@ async function saveForm() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': document.getElementById('admin-password').value,
+      'Authorization': `${document.getElementById('admin-username').value}:${document.getElementById('admin-password').value}`,
     },
     body: JSON.stringify({ name, fields: updatedFields }),
   });
@@ -152,15 +147,6 @@ async function loadAnnouncements() {
   });
 }
 
-async function addAnnouncement() {
-  const content = document.getElementById('new-announcement').value;
-  if (content) {
-    announcements.push({ id: Date.now(), content, date: new Date().toISOString() });
-    document.getElementById('new-announcement').value = '';
-    loadAnnouncements();
-  }
-}
-
 function deleteAnnouncement(index) {
   announcements.splice(index, 1);
   loadAnnouncements();
@@ -175,7 +161,7 @@ async function saveAnnouncements() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': document.getElementById('admin-password').value,
+      'Authorization': `${document.getElementById('admin-username').value}:${document.getElementById('admin-password').value}`,
     },
     body: JSON.stringify(updatedAnnouncements),
   });
