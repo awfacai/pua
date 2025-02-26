@@ -168,5 +168,7 @@ async function saveAnnouncements() {
   if (response.ok) {
     alert('公告已保存');
     loadAnnouncements();
+  } else {
+    alert('保存失败');
   }
 }
