@@ -53,29 +53,23 @@ async function login() {
 }
 
 async function loadForm() {
-  const response = await fetch(`${WORKERS_URL}/api/form`);
-  const formStructure = await response.json();
-  document.getElementById('form-title').textContent = formStructure.name;
-  const form = document.getElementById('user-form');
-  form.innerHTML = '';
-  formStructure.fields.forEach(field => {
+  const response = await fetch(`${WORKERS_URL}/api/form?username=${currentUsername}`);
+  const { form, info } = await response.json();
+  document.getElementById('form-title').textContent = form.name;
+  const formEl = document.getElementById('user-form');
+  formEl.innerHTML = '';
+  form.fields.forEach(field => {
     const label = document.createElement('label');
     label.textContent = field.label;
     label.style.display = 'block';
     const input = document.createElement('input');
     input.type = field.type;
     input.name = field.name;
-    form.appendChild(label);
-    form.appendChild(input);
+    input.value = info[field.name] || '';
+    formEl.appendChild(label);
+    formEl.appendChild(input);
   });
-  // 加载已有数据
-  const storedUser = await kv.get(`user:${currentUsername}`);
-  if (storedUser) {
-    const info = JSON.parse(storedUser).info;
-    for (const input of form.getElementsByTagName('input')) {
-      input.value = info[input.name] || '';
-    }
-  }
+  loadAnnouncements();
 }
 
 async function saveForm() {
@@ -92,4 +86,17 @@ async function saveForm() {
   if (response.ok) {
     alert('保存成功');
   }
+}
+
+async function loadAnnouncements() {
+  const response = await fetch(`${WORKERS_URL}/api/announcements`);
+  const announcements = await response.json();
+  const container = document.getElementById('announcements');
+  container.innerHTML = '<h3>公告</h3>';
+  announcements.forEach(ann => {
+    const div = document.createElement('div');
+    div.className = 'announcement';
+    div.innerHTML = `<strong>${ann.date}</strong><p>${ann.content}</p>`;
+    container.appendChild(div);
+  });
 }
