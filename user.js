@@ -21,6 +21,12 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
+// 自动调整文本框高度
+function adjustTextareaHeight(textarea) {
+  textarea.style.height = '3.8em'; // 默认高度 3.8em
+  textarea.style.height = `${textarea.scrollHeight}px`;
+}
+
 // 自动登录
 window.onload = () => {
   const username = getCookie('username');
@@ -64,7 +70,10 @@ async function loadForm() {
     label.style.display = 'block';
     const textarea = document.createElement('textarea');
     textarea.name = field.name;
+    textarea.placeholder = '请输入您的' + field.label; // 添加占位符说明
     textarea.value = info[field.name] || '';
+    textarea.oninput = () => adjustTextareaHeight(textarea);
+    adjustTextareaHeight(textarea); // 初始化高度
     formEl.appendChild(label);
     formEl.appendChild(textarea);
   });
@@ -83,7 +92,7 @@ async function submitForm() {
     body: JSON.stringify({ username: currentUsername, data }),
   });
   if (response.ok) {
-    alert('提交成功！请耐心等待...\\n通常3小时内完成。完成后激活会通过鳝鱼通知您激活。\\n激活教学见公告内容，请仔细阅读公告，有问题鳝鱼联系我[...]');
+    alert('提交成功！请耐心等待...\n通常3小时内完成。完成后激活会通过咸鱼通知您激活。\n激活教学见公告内容，仔细阅读公告，有问题咸鱼联系我。');
   }
 }
 
