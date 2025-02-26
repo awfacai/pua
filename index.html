@@ -3,14 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <title>用户信息</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-size: cover;
+      background-position: center;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    input, button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    h2 {
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-  <div id="login">
+  <div class="container" id="login">
     <input type="text" id="username" placeholder="用户名">
     <input type="password" id="password" placeholder="密码">
     <button onclick="login()">登录</button>
   </div>
-  <div id="form" style="display: none;">
+  <div class="container" id="form" style="display: none;">
     <h2 id="form-title"></h2>
     <form id="user-form"></form>
     <button onclick="saveForm()">保存</button>
