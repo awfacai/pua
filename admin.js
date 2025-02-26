@@ -1,4 +1,4 @@
-const WORKERS_URL = 'https://puaurl.irvv.workers.dev'; // 替换为你的 Workers URL
+const WORKERS_URL = 'https://puaurl.irvv.workers.dev';
 
 async function adminLogin() {
   const password = document.getElementById('admin-password').value;
