@@ -21,6 +21,12 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
+// 自动调整文本框高度
+function adjustTextareaHeight(textarea) {
+  textarea.style.height = '1.5em';
+  textarea.style.height = `${textarea.scrollHeight}px`;
+}
+
 // 自动登录
 window.onload = () => {
   const username = getCookie('username');
@@ -65,6 +71,8 @@ async function loadForm() {
     const textarea = document.createElement('textarea');
     textarea.name = field.name;
     textarea.value = info[field.name] || '';
+    textarea.oninput = () => adjustTextareaHeight(textarea);
+    adjustTextareaHeight(textarea); // 初始化高度
     formEl.appendChild(label);
     formEl.appendChild(textarea);
   });
