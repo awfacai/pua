@@ -83,7 +83,7 @@ async function submitForm() {
     body: JSON.stringify({ username: currentUsername, data }),
   });
   if (response.ok) {
-    alert('提交成功！请耐心等待...\n通常3小时内完成。完成后激活会通过咸鱼通知您激活。\n激活教学见公告内容，仔细阅读公告，有问题咸鱼联系我。');
+    alert('提交成功！请耐心等待...\\n通常3小时内完成。完成后激活会通过鳝鱼通知您激活。\\n激活教学见公告内容，请仔细阅读公告，有问题鳝鱼联系我[...]');
   }
 }
 
