@@ -75,7 +75,7 @@ async function loadUsers() {
 async function createUser() {
   const username = document.getElementById('new-username').value;
   const password = document.getElementById('new-password').value;
-  await fetch(`${WORKERS_URL}/api/admin/create-user`, {
+  const response = await fetch(`${WORKERS_URL}/api/admin/create-user`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -83,7 +83,12 @@ async function createUser() {
     },
     body: JSON.stringify({ username, password }),
   });
-  loadUsers();
+  if (response.ok) {
+    alert('用户生成成功');
+    loadUsers();
+  } else {
+    alert('用户生成失败');
+  }
 }
 
 async function loadForm() {
