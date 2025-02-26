@@ -1,4 +1,6 @@
 const WORKERS_URL = 'https://puaurl.irvv.workers.dev';
+let announcements = [];
+let formStructure = { name: '个人信息', fields: [] };
 
 // 设置背景图
 fetch('https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1')
@@ -45,8 +47,8 @@ async function adminLogin() {
     document.getElementById('admin-login').style.display = 'none';
     document.getElementById('admin-panel').style.display = 'block';
     loadUsers();
-    loadForm();
     loadAnnouncements();
+    loadForm();
   } else {
     alert('登录失败');
   }
@@ -88,22 +90,42 @@ async function createUser() {
 
 async function loadForm() {
   const response = await fetch(`${WORKERS_URL}/api/form`);
-  const formStructure = await response.json();
-  document.getElementById('form-structure').value = JSON.stringify(formStructure, null, 2);
+  formStructure = await response.json();
+  document.getElementById('form-name').value = formStructure.name;
+  const container = document.getElementById('form-fields-list');
+  container.innerHTML = '';
+  formStructure.fields.forEach((field, index) => {
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.innerHTML = `
+      <textarea id="field-${index}" placeholder="字段 JSON">${JSON.stringify(field)}</textarea>
+      <button onclick="deleteField(${index})">删除</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function deleteField(index) {
+  formStructure.fields.splice(index, 1);
+  loadForm();
 }
 
 async function saveForm() {
-  const formStructure = JSON.parse(document.getElementById('form-structure').value);
+  const name = document.getElementById('form-name').value;
+  const updatedFields = formStructure.fields.map((_, index) => {
+    return JSON.parse(document.getElementById(`field-${index}`).value);
+  });
   const response = await fetch(`${WORKERS_URL}/api/admin/set-form`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `${document.getElementById('admin-username').value}:${document.getElementById('admin-password').value}`,
     },
-    body: JSON.stringify(formStructure),
+    body: JSON.stringify({ name, fields: updatedFields }),
   });
   if (response.ok) {
     alert('表格已保存');
+    loadForm();
   } else {
     alert('保存失败');
   }
@@ -111,23 +133,40 @@ async function saveForm() {
 
 async function loadAnnouncements() {
   const response = await fetch(`${WORKERS_URL}/api/announcements`);
-  const announcements = await response.json();
-  document.getElementById('announcements').value = JSON.stringify(announcements, null, 2);
+  announcements = await response.json();
+  const container = document.getElementById('announcements-list');
+  container.innerHTML = '';
+  announcements.forEach((ann, index) => {
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.innerHTML = `
+      <textarea id="ann-${ann.id}" placeholder="公告内容">${ann.content}</textarea>
+      <button onclick="deleteAnnouncement(${index})">删除</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function deleteAnnouncement(index) {
+  announcements.splice(index, 1);
+  loadAnnouncements();
 }
 
 async function saveAnnouncements() {
-  const announcements = JSON.parse(document.getElementById('announcements').value);
+  const updatedAnnouncements = announcements.map(ann => {
+    const content = document.getElementById(`ann-${ann.id}`).value;
+    return { ...ann, content };
+  });
   const response = await fetch(`${WORKERS_URL}/api/admin/update-announcements`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `${document.getElementById('admin-username').value}:${document.getElementById('admin-password').value}`,
     },
-    body: JSON.stringify(announcements),
+    body: JSON.stringify(updatedAnnouncements),
   });
   if (response.ok) {
     alert('公告已保存');
-  } else {
-    alert('保存失败');
+    loadAnnouncements();
   }
 }
