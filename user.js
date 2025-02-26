@@ -23,7 +23,7 @@ function getCookie(name) {
 
 // 自动调整文本框高度
 function adjustTextareaHeight(textarea) {
-  textarea.style.height = '1.5em';
+  textarea.style.height = '3.8em'; // 默认高度 3.8em
   textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
