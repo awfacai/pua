@@ -58,7 +58,8 @@
 </head>
 <body>
   <div class="container" id="admin-login">
-    <input type="password" id="admin-password" placeholder="后台密码">
+    <input type="text" id="admin-username" placeholder="用户名">
+    <input type="password" id="admin-password" placeholder="密码">
     <button onclick="adminLogin()">登录</button>
   </div>
   <div class="container" id="admin-panel" style="display: none;">
@@ -71,13 +72,9 @@
     <h2>表格管理</h2>
     <div id="form-fields-list"></div>
     <input type="text" id="form-name" placeholder="表格名称">
-    <textarea id="new-field" placeholder='{"name": "field1", "type": "text", "label": "字段1"}'></textarea>
-    <button onclick="addField()">添加新字段</button>
     <button onclick="saveForm()">保存表格</button>
     <h2>公告管理</h2>
     <div id="announcements-list"></div>
-    <textarea id="new-announcement" placeholder="新公告内容"></textarea>
-    <button onclick="addAnnouncement()">添加新公告</button>
     <button onclick="saveAnnouncements()">保存所有公告</button>
   </div>
   <script src="/admin.js"></script>
