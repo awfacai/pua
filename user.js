@@ -21,10 +21,11 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
-// 解析文本中的 URL 为可点击链接
+// 解析文本中的 URL 为可点击链接，并处理换行
 function linkify(text) {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
-  return text.replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+  // 先将 \n 替换为 <br>，再处理链接
+  return text.replace(/\n/g, '<br>').replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
 }
 
 // 加载公告的通用函数
