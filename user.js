@@ -27,10 +27,12 @@ function linkify(text) {
   return text.replace(/\n/g, '<br>').replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
 }
 
-// 动态调整文本框高度
+// 动态调整文本框高度，确保显示完整内容和占位符
 function adjustTextareaHeight(textarea) {
-  textarea.style.height = 'auto'; // 先重置高度
-  textarea.style.height = `${textarea.scrollHeight}px`; // 设置为内容高度
+  textarea.style.height = 'auto'; // 重置高度
+  const scrollHeight = textarea.scrollHeight;
+  const minHeight = parseFloat(getComputedStyle(textarea).minHeight); // 获取最小高度（2em）
+  textarea.style.height = `${Math.max(scrollHeight, minHeight)}px`; // 取内容高度和最小高度的最大值
 }
 
 // 加载公告的通用函数
@@ -107,7 +109,7 @@ async function loadForm() {
         textarea.name = field.name;
         textarea.placeholder = field.placeholder || `请输入${field.label || field.name}`;
         textarea.value = info[field.name] || '';
-        textarea.oninput = () => adjustTextareaHeight(textarea); // 输入时调整高度
+        textarea.addEventListener('input', () => adjustTextareaHeight(textarea)); // 输入时调整高度
         adjustTextareaHeight(textarea); // 初始化高度
         formEl.appendChild(label);
         formEl.appendChild(textarea);
