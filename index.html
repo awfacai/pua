@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 适配手机视口 -->
   <title>用户信息</title>
   <style>
     body {
@@ -9,28 +10,31 @@
       background-size: cover;
       background-position: center;
       margin: 0;
-      padding: 20px;
+      padding: 2vw; /* 使用相对单位 */
       color: #333;
+      font-size: 16px; /* 基础字体大小，手机可读 */
     }
     .container {
-      max-width: 600px;
+      max-width: 90vw; /* 适配手机宽度 */
       margin: 0 auto;
       background: rgba(255, 255, 255, 0.9);
-      padding: 20px;
-      border-radius: 8px;
+      padding: 3vw;
+      border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
     input, textarea, button {
       display: block;
       width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 4px;
+      padding: 2vw; /* 增大触摸区域 */
+      margin: 2vw 0;
+      border-radius: 5px;
       border: 1px solid #ccc;
+      box-sizing: border-box; /* 确保 padding 不影响宽度 */
+      font-size: 1rem; /* 增大字体 */
     }
     textarea {
-      height: 1.2em; /* 默认高度 1.2em */
-      resize: vertical; /* 允许手动调整 */
+      height: 2em; /* 默认高度 */
+      resize: vertical;
       line-height: 1.5;
     }
     button {
@@ -38,21 +42,44 @@
       color: white;
       border: none;
       cursor: pointer;
+      padding: 3vw; /* 增大按钮高度 */
+      font-size: 1.2rem; /* 增大按钮文字 */
     }
     button:hover {
       background: #0056b3;
     }
     h2 {
       text-align: center;
+      font-size: 1.5rem; /* 标题适配手机 */
+      margin: 2vw 0;
     }
     #announcements, #login-announcements {
-      margin-top: 20px;
+      margin-top: 3vw;
     }
     .announcement {
       border: 1px solid #ddd;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 4px;
+      padding: 2vw;
+      margin: 2vw 0;
+      border-radius: 5px;
+      word-wrap: break-word; /* 强制换行 */
+    }
+    .announcement a {
+      color: #007BFF;
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) { /* 手机特定样式 */
+      body {
+        padding: 4vw;
+      }
+      .container {
+        padding: 4vw;
+      }
+      input, textarea, button {
+        padding: 3vw;
+      }
+      h2 {
+        font-size: 1.3rem;
+      }
     }
   </style>
 </head>
@@ -61,13 +88,13 @@
     <input type="text" id="username" placeholder="用户名">
     <input type="password" id="password" placeholder="密码">
     <button onclick="login()">登录</button>
-    <div id="login-announcements"></div> <!-- 未登录时的公告 -->
+    <div id="login-announcements"></div>
   </div>
   <div class="container" id="form" style="display: none;">
     <h2 id="form-title"></h2>
     <form id="user-form"></form>
     <button onclick="submitForm()">提交</button>
-    <div id="announcements"></div> <!-- 登录后的公告 -->
+    <div id="announcements"></div>
   </div>
   <script src="/user.js"></script>
 </body>
