@@ -20,7 +20,6 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
-// 自动登录
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM 已加载，正在检查自动登录...');
   const adminUsername = getCookie('adminUsername');
@@ -70,14 +69,17 @@ async function loadUsers() {
     headers: { 'Authorization': `${document.getElementById('admin-username').value}:${document.getElementById('admin-password').value}` },
   });
   const users = await response.json();
+  const formResponse = await fetch(`${WORKERS_URL}/api/form`);
+  const { form } = await formResponse.json();
+  const labelMap = Object.fromEntries(form.fields.map(f => [f.name, f.label])); // 构建 name 到 label 的映射
   const list = document.getElementById('user-list');
   list.innerHTML = '';
   users.forEach(user => {
     const li = document.createElement('li');
     const infoStr = Object.entries(user.info)
-      .map(([key, value]) => `${key}: ${value}`) // 直接使用 info 的键值对
+      .map(([key, value]) => `${labelMap[key] || key}: ${value}`) // 使用 label 而不是 name
       .join(', ');
-    li.textContent = `${user.username}: ${infoStr || '无信息'}`;
+    li.textContent = `${user.username}: ${infoStr || '无信息'} (最后更新: ${user.lastUpdated || '未更新'})`;
     list.appendChild(li);
   });
 }
@@ -173,7 +175,7 @@ async function saveAnnouncements() {
     });
     if (response.ok) {
       alert('公告已保存');
-      loadAnnouncements(); // 刷新显示
+      loadAnnouncements();
     } else {
       alert('公告保存失败');
     }
