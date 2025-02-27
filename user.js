@@ -1,4 +1,4 @@
-const WORKERS_URL = 'https://puaurl.pages.dev';
+const WORKERS_URL = 'https://puaurl.pages.dev/api'; // Pages Functions 的 API 路径
 let currentUsername;
 
 // 设置背景图
@@ -30,8 +30,8 @@ function linkify(text) {
 // 加载公告的通用函数
 async function loadAnnouncements(containerId) {
   try {
-    const response = await fetch(`${WORKERS_URL}/api/announcements`);
-    if (!response.ok) throw new Error('无法加载公告');
+    const response = await fetch(`${WORKERS_URL}/announcements`);
+    if (!response.ok) throw new Error(`无法加载公告：${response.status} ${await response.text()}`);
     const announcements = await response.json();
     const container = document.getElementById(containerId);
     container.innerHTML = '<h3>公告</h3>';
@@ -47,7 +47,7 @@ async function loadAnnouncements(containerId) {
     }
   } catch (error) {
     console.error('加载公告失败:', error);
-    document.getElementById(containerId).innerHTML = '<p>加载公告失败</p>';
+    document.getElementById(containerId).innerHTML = '<p>加载公告失败：' + error.message + '</p>';
   }
 }
 
@@ -66,27 +66,31 @@ window.onload = () => {
 async function login() {
   const username = document.getElementById('username').value;
   const password = document.getElementById('password').value;
-  const response = await fetch(`${WORKERS_URL}/api/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password }),
-  });
-  if (response.ok) {
-    currentUsername = username;
-    setCookie('username', username, 30);
-    setCookie('password', password, 30);
-    document.getElementById('login').style.display = 'none';
-    document.getElementById('form').style.display = 'block';
-    loadForm();
-  } else {
-    alert('登录失败');
+  try {
+    const response = await fetch(`${WORKERS_URL}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+    if (response.ok) {
+      currentUsername = username;
+      setCookie('username', username, 30);
+      setCookie('password', password, 30);
+      document.getElementById('login').style.display = 'none';
+      document.getElementById('form').style.display = 'block';
+      loadForm();
+    } else {
+      alert('登录失败：' + (await response.text()));
+    }
+  } catch (error) {
+    alert('登录失败，网络错误：' + error.message);
   }
 }
 
 async function loadForm() {
   try {
-    const response = await fetch(`${WORKERS_URL}/api/form?username=${currentUsername}`);
-    if (!response.ok) throw new Error('无法加载表格数据');
+    const response = await fetch(`${WORKERS_URL}/form?username=${currentUsername}`);
+    if (!response.ok) throw new Error(`无法加载表格数据：${response.status} ${await response.text()}`);
     const { form, info } = await response.json();
     document.getElementById('form-title').textContent = form.name || '未设置表格名称';
     const formEl = document.getElementById('user-form');
@@ -109,7 +113,7 @@ async function loadForm() {
     loadAnnouncements('announcements');
   } catch (error) {
     console.error('加载表格失败:', error);
-    document.getElementById('user-form').innerHTML = '<p>加载表格失败，请联系管理员</p>';
+    document.getElementById('user-form').innerHTML = '<p>加载表格失败：' + error.message + '</p>';
   }
 }
 
@@ -119,12 +123,18 @@ async function submitForm() {
   for (const textarea of form.getElementsByTagName('textarea')) {
     data[textarea.name] = textarea.value;
   }
-  const response = await fetch(`${WORKERS_URL}/api/save`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: currentUsername, data }),
-  });
-  if (response.ok) {
-    alert('提交成功！请耐心等待...\n通常3小时内完成。完成后激活会通过咸鱼通知您激活。\n激活教学见公告内容，仔细阅读公告，有问题咸鱼联系我。');
+  try {
+    const response = await fetch(`${WORKERS_URL}/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: currentUsername, data }),
+    });
+    if (response.ok) {
+      alert('提交成功！请耐心等待...\n通常3小时内完成。完成后激活会通过咸鱼通知您激活。\n激活教学见公告内容，仔细阅读公告，有问题咸鱼联系我。');
+    } else {
+      alert('提交失败：' + (await response.text()));
+    }
+  } catch (error) {
+    alert('提交失败，网络错误：' + error.message);
   }
 }
