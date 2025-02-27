@@ -1,4 +1,4 @@
-const WORKERS_URL = 'https://puaurl.pages.dev/';
+const WORKERS_URL = 'https://puaurl.pages.dev';
 
 // 设置背景图
 fetch('https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1')
