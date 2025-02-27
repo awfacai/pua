@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 适配手机视口 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>用户信息</title>
   <style>
     body {
@@ -10,12 +10,12 @@
       background-size: cover;
       background-position: center;
       margin: 0;
-      padding: 2vw; /* 使用相对单位 */
+      padding: 2vw;
       color: #333;
-      font-size: 16px; /* 基础字体大小，手机可读 */
+      font-size: 16px;
     }
     .container {
-      max-width: 90vw; /* 适配手机宽度 */
+      max-width: 90vw;
       margin: 0 auto;
       background: rgba(255, 255, 255, 0.9);
       padding: 3vw;
@@ -25,15 +25,15 @@
     input, textarea, button {
       display: block;
       width: 100%;
-      padding: 2vw; /* 增大触摸区域 */
+      padding: 2vw;
       margin: 2vw 0;
       border-radius: 5px;
       border: 1px solid #ccc;
-      box-sizing: border-box; /* 确保 padding 不影响宽度 */
-      font-size: 1rem; /* 增大字体 */
+      box-sizing: border-box;
+      font-size: 1rem;
     }
     textarea {
-      height: 2em; /* 默认高度 */
+      height: 2em;
       resize: vertical;
       line-height: 1.5;
     }
@@ -42,16 +42,20 @@
       color: white;
       border: none;
       cursor: pointer;
-      padding: 3vw; /* 增大按钮高度 */
-      font-size: 1.2rem; /* 增大按钮文字 */
+      padding: 3vw;
+      font-size: 1.2rem;
     }
     button:hover {
       background: #0056b3;
     }
     h2 {
       text-align: center;
-      font-size: 1.5rem; /* 标题适配手机 */
+      font-size: 1.5rem;
       margin: 2vw 0;
+    }
+    h3 {
+      font-size: 1.2rem;
+      margin: 2vw 0 1vw;
     }
     #announcements, #login-announcements {
       margin-top: 3vw;
@@ -61,13 +65,13 @@
       padding: 2vw;
       margin: 2vw 0;
       border-radius: 5px;
-      word-wrap: break-word; /* 强制换行 */
+      word-wrap: break-word;
     }
     .announcement a {
       color: #007BFF;
       text-decoration: underline;
     }
-    @media (max-width: 600px) { /* 手机特定样式 */
+    @media (max-width: 600px) {
       body {
         padding: 4vw;
       }
@@ -79,6 +83,9 @@
       }
       h2 {
         font-size: 1.3rem;
+      }
+      h3 {
+        font-size: 1.1rem;
       }
     }
   </style>
