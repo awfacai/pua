@@ -23,7 +23,7 @@ function getCookie(name) {
 
 // 自动调整文本框高度
 function adjustTextareaHeight(textarea) {
-  textarea.style.height = '7.6em'; // 默认高度改为 7.6em
+  textarea.style.height = '7.6em'; // 默认高度 7.6em
   textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
@@ -59,25 +59,35 @@ async function login() {
 }
 
 async function loadForm() {
-  const response = await fetch(`${WORKERS_URL}/api/form?username=${currentUsername}`);
-  const { form, info } = await response.json();
-  document.getElementById('form-title').textContent = form.name;
-  const formEl = document.getElementById('user-form');
-  formEl.innerHTML = '';
-  form.fields.forEach(field => {
-    const label = document.createElement('label');
-    label.textContent = field.label;
-    label.style.display = 'block';
-    const textarea = document.createElement('textarea');
-    textarea.name = field.name;
-    textarea.placeholder = '请输入您的' + field.label; // 添加占位符说明
-    textarea.value = info[field.name] || '';
-    textarea.oninput = () => adjustTextareaHeight(textarea);
-    adjustTextareaHeight(textarea); // 初始化高度
-    formEl.appendChild(label);
-    formEl.appendChild(textarea);
-  });
-  loadAnnouncements();
+  try {
+    const response = await fetch(`${WORKERS_URL}/api/form?username=${currentUsername}`);
+    if (!response.ok) throw new Error('无法加载表格数据');
+    const { form, info } = await response.json();
+    document.getElementById('form-title').textContent = form.name || '未设置表格名称';
+    const formEl = document.getElementById('user-form');
+    formEl.innerHTML = '';
+    if (form.fields && Array.isArray(form.fields)) {
+      form.fields.forEach(field => {
+        const label = document.createElement('label');
+        label.textContent = field.label || field.name || '未命名字段';
+        label.style.display = 'block';
+        const textarea = document.createElement('textarea');
+        textarea.name = field.name;
+        textarea.placeholder = '请输入您的' + (field.label || field.name);
+        textarea.value = info[field.name] || ''; // 显示匹配字段的信息，即使字段名变更
+        textarea.oninput = () => adjustTextareaHeight(textarea);
+        adjustTextareaHeight(textarea);
+        formEl.appendChild(label);
+        formEl.appendChild(textarea);
+      });
+    } else {
+      formEl.innerHTML = '<p>暂无表格字段</p>';
+    }
+    loadAnnouncements();
+  } catch (error) {
+    console.error('加载表格失败:', error);
+    document.getElementById('user-form').innerHTML = '<p>加载表格失败，请联系管理员</p>';
+  }
 }
 
 async function submitForm() {
