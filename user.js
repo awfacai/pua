@@ -1,4 +1,4 @@
-const WORKERS_URL = 'https://puaurl.pages.dev'; // Pages Functions 的 API 路径
+const WORKERS_URL = 'https://puaurl.pages.dev'; // 根域名
 let currentUsername;
 
 // 设置背景图
