@@ -1,4 +1,4 @@
-const WORKERS_URL = 'https://puaurl.pages.dev/api'; // Pages Functions 的 API 路径
+const WORKERS_URL = 'https://puaurl.pages.dev'; // Pages Functions 的 API 路径
 
 // 设置背景图
 fetch('https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1')
