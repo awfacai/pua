@@ -1,4 +1,4 @@
-const WORKERS_URL = 'https://puaurl.pages.dev'; // 根域名
+const WORKERS_URL = 'https://puaurl.pages.dev';
 let currentUsername;
 
 // 设置背景图
@@ -24,7 +24,7 @@ function getCookie(name) {
 // 解析文本中的 URL 为可点击链接
 function linkify(text) {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
-  return text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
+  return text.replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
 }
 
 // 加载公告的通用函数
