@@ -52,19 +52,16 @@ async function adminLogin() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     });
-    if (response.ok) {
-      setCookie('adminUsername', username, 30);
-      setCookie('adminPassword', password, 30);
-      document.getElementById('admin-login').style.display = 'none';
-      document.getElementById('admin-panel').style.display = 'block';
-      loadUsers();
-      loadForm();
-      loadAnnouncements();
-    } else {
-      alert('登录失败：' + (await response.text()));
-    }
+    if (!response.ok) throw new Error(`登录失败：${response.status} ${await response.text()}`);
+    setCookie('adminUsername', username, 30);
+    setCookie('adminPassword', password, 30);
+    document.getElementById('admin-login').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    loadUsers();
+    loadForm();
+    loadAnnouncements();
   } catch (error) {
-    alert('登录失败，网络错误：' + error.message);
+    alert('登录失败：' + error.message);
   }
 }
 
@@ -107,16 +104,13 @@ async function createUser() {
       },
       body: JSON.stringify({ username, password }),
     });
-    if (response.ok) {
-      alert('用户生成成功');
-      document.getElementById('new-username').value = '';
-      document.getElementById('new-password').value = '';
-      loadUsers();
-    } else {
-      alert('用户生成失败：' + (await response.text()));
-    }
+    if (!response.ok) throw new Error(`用户生成失败：${response.status} ${await response.text()}`);
+    alert('用户生成成功');
+    document.getElementById('new-username').value = '';
+    document.getElementById('new-password').value = '';
+    loadUsers();
   } catch (error) {
-    alert('用户生成失败，网络错误：' + error.message);
+    alert('用户生成失败：' + error.message);
   }
 }
 
@@ -155,12 +149,9 @@ async function saveForm() {
       },
       body: JSON.stringify(formStructure),
     });
-    if (response.ok) {
-      alert('表格已保存');
-      loadForm();
-    } else {
-      alert('保存失败：' + (await response.text()));
-    }
+    if (!response.ok) throw new Error(`保存失败：${response.status} ${await response.text()}`);
+    alert('表格已保存');
+    loadForm();
   } catch (error) {
     alert('表格格式错误或网络问题，请检查 JSON：' + error.message);
   }
@@ -201,12 +192,9 @@ async function saveAnnouncements() {
       },
       body: JSON.stringify(announcements),
     });
-    if (response.ok) {
-      alert('公告已保存');
-      loadAnnouncements();
-    } else {
-      alert('公告保存失败：' + (await response.text()));
-    }
+    if (!response.ok) throw new Error(`公告保存失败：${response.status} ${await response.text()}`);
+    alert('公告已保存');
+    loadAnnouncements();
   } catch (error) {
     alert('公告格式错误或网络问题，请检查 JSON：' + error.message);
   }
