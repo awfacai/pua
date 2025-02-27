@@ -21,6 +21,12 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
+// 解析文本中的 URL 为可点击链接
+function linkify(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
+}
+
 // 加载公告的通用函数
 async function loadAnnouncements(containerId) {
   try {
@@ -33,7 +39,7 @@ async function loadAnnouncements(containerId) {
       announcements.forEach(ann => {
         const div = document.createElement('div');
         div.className = 'announcement';
-        div.innerHTML = `<strong>${ann.date}</strong><p>${ann.content}</p>`;
+        div.innerHTML = `<strong>${ann.date}</strong><p>${linkify(ann.content)}</p>`;
         container.appendChild(div);
       });
     } else {
@@ -47,7 +53,7 @@ async function loadAnnouncements(containerId) {
 
 // 自动登录并加载未登录页面公告
 window.onload = () => {
-  loadAnnouncements('login-announcements'); // 加载未登录页面公告
+  loadAnnouncements('login-announcements');
   const username = getCookie('username');
   const password = getCookie('password');
   if (username && password) {
@@ -92,7 +98,7 @@ async function loadForm() {
         label.style.display = 'block';
         const textarea = document.createElement('textarea');
         textarea.name = field.name;
-        textarea.placeholder = field.placeholder || `请输入${field.label || field.name}`; // 使用 JSON 中的 placeholder
+        textarea.placeholder = field.placeholder || `请输入${field.label || field.name}`;
         textarea.value = info[field.name] || '';
         formEl.appendChild(label);
         formEl.appendChild(textarea);
@@ -100,7 +106,7 @@ async function loadForm() {
     } else {
       formEl.innerHTML = '<p>暂无表格字段</p>';
     }
-    loadAnnouncements('announcements'); // 加载登录后公告
+    loadAnnouncements('announcements');
   } catch (error) {
     console.error('加载表格失败:', error);
     document.getElementById('user-form').innerHTML = '<p>加载表格失败，请联系管理员</p>';
