@@ -1,4 +1,4 @@
-const WORKERS_URL = 'https://puaurl.pages.dev'; // Pages Functions 的 API 路径
+const WORKERS_URL = 'https://puaurl.pages.dev';
 
 // 设置背景图
 fetch('https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1')
@@ -76,8 +76,9 @@ async function loadUsers() {
     if (!response.ok) throw new Error('无法加载用户信息：' + (await response.text()));
     const users = await response.json();
     const formResponse = await fetch(`${WORKERS_URL}/form`);
+    if (!formResponse.ok) throw new Error('无法加载表格结构：' + (await formResponse.text()));
     const { form } = await formResponse.json();
-    const labelMap = Object.fromEntries(form.fields.map(f => [f.name, f.label]));
+    const labelMap = form && form.fields ? Object.fromEntries(form.fields.map(f => [f.name, f.label])) : {};
     const list = document.getElementById('user-list');
     list.innerHTML = '';
     users.forEach(user => {
@@ -130,7 +131,7 @@ async function loadForm() {
     const response = await fetch(`${WORKERS_URL}/form`);
     if (!response.ok) throw new Error('无法加载表格：' + (await response.text()));
     const formStructure = await response.json();
-    formTextarea.value = JSON.stringify(formStructure, null, 2);
+    formTextarea.value = JSON.stringify(formStructure.form, null, 2);
   } catch (error) {
     console.error('加载表格失败:', error);
     formTextarea.value = '加载失败：' + error.message;
@@ -156,6 +157,7 @@ async function saveForm() {
     });
     if (response.ok) {
       alert('表格已保存');
+      loadForm();
     } else {
       alert('保存失败：' + (await response.text()));
     }
