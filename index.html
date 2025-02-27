@@ -33,8 +33,9 @@
       font-size: 1rem;
     }
     textarea {
-      height: 2em;
-      resize: vertical;
+      height: 2em; /* 初始高度 */
+      resize: none; /* 禁止手动调整 */
+      overflow: hidden; /* 移除滚动条 */
       line-height: 1.5;
     }
     button {
@@ -52,10 +53,16 @@
       text-align: center;
       font-size: 1.5rem;
       margin: 2vw 0;
+      color: red; /* 标题为红色 */
     }
     h3 {
       font-size: 1.2rem;
       margin: 2vw 0 1vw;
+    }
+    label {
+      color: red; /* 字段标签为红色 */
+      font-size: 1rem;
+      margin-top: 2vw;
     }
     #announcements, #login-announcements {
       margin-top: 3vw;
@@ -86,6 +93,9 @@
       }
       h3 {
         font-size: 1.1rem;
+      }
+      label {
+        font-size: 0.9rem;
       }
     }
   </style>
