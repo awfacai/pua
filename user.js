@@ -1,4 +1,4 @@
-const WORKERS_URL = 'https://puaurl.irvv.workers.dev';
+const WORKERS_URL = 'https://puaurl.pages.dev/';
 let currentUsername;
 
 // 设置背景图
