@@ -21,12 +21,6 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
-// 自动调整文本框高度
-function adjustTextareaHeight(textarea) {
-  textarea.style.height = '2em'; // 默认高度改为 2em
-  textarea.style.height = `${textarea.scrollHeight}px`;
-}
-
 // 加载公告的通用函数
 async function loadAnnouncements(containerId) {
   try {
@@ -98,14 +92,8 @@ async function loadForm() {
         label.style.display = 'block';
         const textarea = document.createElement('textarea');
         textarea.name = field.name;
-        if (field.name.includes('ns')) {
-          textarea.placeholder = `请输入${field.label}，每行一条，例如：\nns1.example.com\nns2.example.com`;
-        } else {
-          textarea.placeholder = `请输入您的${field.label}，例如：example.com（域名）或12345678901（手机号）`;
-        }
+        textarea.placeholder = field.placeholder || `请输入${field.label || field.name}`; // 使用 JSON 中的 placeholder
         textarea.value = info[field.name] || '';
-        textarea.oninput = () => adjustTextareaHeight(textarea);
-        adjustTextareaHeight(textarea);
         formEl.appendChild(label);
         formEl.appendChild(textarea);
       });
