@@ -72,18 +72,15 @@ async function login() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     });
-    if (response.ok) {
-      currentUsername = username;
-      setCookie('username', username, 30);
-      setCookie('password', password, 30);
-      document.getElementById('login').style.display = 'none';
-      document.getElementById('form').style.display = 'block';
-      loadForm();
-    } else {
-      alert('登录失败：' + (await response.text()));
-    }
+    if (!response.ok) throw new Error(`登录失败：${response.status} ${await response.text()}`);
+    currentUsername = username;
+    setCookie('username', username, 30);
+    setCookie('password', password, 30);
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('form').style.display = 'block';
+    loadForm();
   } catch (error) {
-    alert('登录失败，网络错误：' + error.message);
+    alert('登录失败：' + error.message);
   }
 }
 
@@ -95,7 +92,7 @@ async function loadForm() {
     document.getElementById('form-title').textContent = form.name || '未设置表格名称';
     const formEl = document.getElementById('user-form');
     formEl.innerHTML = '';
-    if (form.fields && Array.isArray(form.fields)) {
+    if (form && form.fields && Array.isArray(form.fields)) {
       form.fields.forEach(field => {
         const label = document.createElement('label');
         label.textContent = field.label || field.name || '未命名字段';
@@ -129,12 +126,9 @@ async function submitForm() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: currentUsername, data }),
     });
-    if (response.ok) {
-      alert('提交成功！请耐心等待...\n通常3小时内完成。完成后激活会通过咸鱼通知您激活。\n激活教学见公告内容，仔细阅读公告，有问题咸鱼联系我。');
-    } else {
-      alert('提交失败：' + (await response.text()));
-    }
+    if (!response.ok) throw new Error(`提交失败：${response.status} ${await response.text()}`);
+    alert('提交成功！请耐心等待...\n通常3小时内完成。完成后激活会通过咸鱼通知您激活。\n激活教学见公告内容，仔细阅读公告，有问题咸鱼联系我。');
   } catch (error) {
-    alert('提交失败，网络错误：' + error.message);
+    alert('提交失败：' + error.message);
   }
 }
