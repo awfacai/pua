@@ -70,15 +70,12 @@ async function loadUsers() {
     headers: { 'Authorization': `${document.getElementById('admin-username').value}:${document.getElementById('admin-password').value}` },
   });
   const users = await response.json();
-  const formResponse = await fetch(`${WORKERS_URL}/api/form`);
-  const { form } = await formResponse.json();
-  const labelMap = Object.fromEntries(form.fields.map(f => [f.name, f.label]));
   const list = document.getElementById('user-list');
   list.innerHTML = '';
   users.forEach(user => {
     const li = document.createElement('li');
     const infoStr = Object.entries(user.info)
-      .map(([key, value]) => `${labelMap[key] || key}: ${value}`)
+      .map(([key, value]) => `${key}: ${value}`) // 直接使用 info 的键值对
       .join(', ');
     li.textContent = `${user.username}: ${infoStr || '无信息'}`;
     list.appendChild(li);
