@@ -23,12 +23,37 @@ function getCookie(name) {
 
 // 自动调整文本框高度
 function adjustTextareaHeight(textarea) {
-  textarea.style.height = '7.6em'; // 默认高度 7.6em
+  textarea.style.height = '2em'; // 默认高度改为 2em
   textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
-// 自动登录
+// 加载公告的通用函数
+async function loadAnnouncements(containerId) {
+  try {
+    const response = await fetch(`${WORKERS_URL}/api/announcements`);
+    if (!response.ok) throw new Error('无法加载公告');
+    const announcements = await response.json();
+    const container = document.getElementById(containerId);
+    container.innerHTML = '<h3>公告</h3>';
+    if (announcements.length > 0) {
+      announcements.forEach(ann => {
+        const div = document.createElement('div');
+        div.className = 'announcement';
+        div.innerHTML = `<strong>${ann.date}</strong><p>${ann.content}</p>`;
+        container.appendChild(div);
+      });
+    } else {
+      container.innerHTML += '<p>暂无公告</p>';
+    }
+  } catch (error) {
+    console.error('加载公告失败:', error);
+    document.getElementById(containerId).innerHTML = '<p>加载公告失败</p>';
+  }
+}
+
+// 自动登录并加载未登录页面公告
 window.onload = () => {
+  loadAnnouncements('login-announcements'); // 加载未登录页面公告
   const username = getCookie('username');
   const password = getCookie('password');
   if (username && password) {
@@ -73,8 +98,12 @@ async function loadForm() {
         label.style.display = 'block';
         const textarea = document.createElement('textarea');
         textarea.name = field.name;
-        textarea.placeholder = '请输入您的' + (field.label || field.name);
-        textarea.value = info[field.name] || ''; // 显示匹配字段的信息，即使字段名变更
+        if (field.name.includes('ns')) {
+          textarea.placeholder = `请输入${field.label}，每行一条，例如：\nns1.example.com\nns2.example.com`;
+        } else {
+          textarea.placeholder = `请输入您的${field.label}，例如：example.com（域名）或12345678901（手机号）`;
+        }
+        textarea.value = info[field.name] || '';
         textarea.oninput = () => adjustTextareaHeight(textarea);
         adjustTextareaHeight(textarea);
         formEl.appendChild(label);
@@ -83,7 +112,7 @@ async function loadForm() {
     } else {
       formEl.innerHTML = '<p>暂无表格字段</p>';
     }
-    loadAnnouncements();
+    loadAnnouncements('announcements'); // 加载登录后公告
   } catch (error) {
     console.error('加载表格失败:', error);
     document.getElementById('user-form').innerHTML = '<p>加载表格失败，请联系管理员</p>';
@@ -104,17 +133,4 @@ async function submitForm() {
   if (response.ok) {
     alert('提交成功！请耐心等待...\n通常3小时内完成。完成后激活会通过咸鱼通知您激活。\n激活教学见公告内容，仔细阅读公告，有问题咸鱼联系我。');
   }
-}
-
-async function loadAnnouncements() {
-  const response = await fetch(`${WORKERS_URL}/api/announcements`);
-  const announcements = await response.json();
-  const container = document.getElementById('announcements');
-  container.innerHTML = '<h3>公告</h3>';
-  announcements.forEach(ann => {
-    const div = document.createElement('div');
-    div.className = 'announcement';
-    div.innerHTML = `<strong>${ann.date}</strong><p>${ann.content}</p>`;
-    container.appendChild(div);
-  });
 }
