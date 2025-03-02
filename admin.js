@@ -83,12 +83,36 @@ async function loadUsers() {
       const infoStr = Object.entries(user.info)
         .map(([key, value]) => `${labelMap[key] || key}: ${value}`)
         .join(', ');
-      li.textContent = `${user.username}: ${infoStr || '无信息'} (最后更新: ${user.lastUpdated || '未更新'})`;
+      li.innerHTML = `
+        ${user.username}: ${infoStr || '无信息'} (最后更新: ${user.lastUpdated || '未更新'})<br>
+        备注: <input type="text" id="note-${user.username}" value="${user.note || ''}">
+        <button onclick="saveNote('${user.username}')">保存备注</button>
+      `;
       list.appendChild(li);
     });
   } catch (error) {
     console.error('加载用户信息失败:', error);
     document.getElementById('user-list').innerHTML = '<p>加载用户信息失败：' + error.message + '</p>';
+  }
+}
+
+async function saveNote(username) {
+  const noteInput = document.getElementById(`note-${username}`);
+  const note = noteInput.value;
+  try {
+    const response = await fetch(`${WORKERS_URL}/admin/update-note`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `${document.getElementById('admin-username').value}:${document.getElementById('admin-password').value}`,
+      },
+      body: JSON.stringify({ username, note }),
+    });
+    if (!response.ok) throw new Error(`保存备注失败：${response.status} ${await response.text()}`);
+    alert('备注已保存');
+    loadUsers(); // 刷新用户列表
+  } catch (error) {
+    alert('保存备注失败：' + error.message);
   }
 }
 
